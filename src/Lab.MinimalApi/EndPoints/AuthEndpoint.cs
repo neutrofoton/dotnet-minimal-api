@@ -54,13 +54,19 @@ public static class AuthEndpoint
     private async static Task<IResult> Login(IAuthRepository authRepository,
        [FromBody] LoginRequest model)
     {
-        ApiResponse response = new() { IsSuccess = false, StatusCode = HttpStatusCode.BadRequest };
+        ApiResponse response = new() 
+        { 
+            IsSuccess = false, 
+            StatusCode = HttpStatusCode.BadRequest 
+        };
+
         var loginResponse = await authRepository.Login(model);
-        if (loginResponse == null)
+        if (loginResponse == null || loginResponse!.User==null || loginResponse!.Token==null)
         {
             response.ErrorMessages.Add("Username or password is incorrect");
             return Results.BadRequest(response);
         }
+
         response.Result = loginResponse;
         response.IsSuccess = true;
         response.StatusCode = HttpStatusCode.OK;

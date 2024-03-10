@@ -34,6 +34,13 @@ public class AuthRepository : IAuthRepository
             && x.Password == loginRequest.Password
         );
 
+        if(user==null){
+            return new LoginResponse()
+            {
+                Token=null,
+                User=null
+            };
+        }
 
         //build JWT token using secretKey
         var tokenHandler = new JwtSecurityTokenHandler();

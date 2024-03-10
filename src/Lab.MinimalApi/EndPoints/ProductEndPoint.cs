@@ -3,6 +3,7 @@ using Lab.MinimalApi.Dto;
 using Lab.MinimalApi.Dto.Product;
 using Lab.MinimalApi.Dto.Product.Request;
 using Lab.MinimalApi.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lab.MinimalApi;
@@ -36,11 +37,12 @@ public static class ProductEndPoint
             .Produces(400)
             .AddEndpointFilter<RequestValidatorFilter<ProductUpdateRequest>>();
 
-         app.MapDelete("/api/coupon/{id:int}",DeleteCoupon)
+         app.MapDelete("/api/product/{id:int}",Delete)
             .AddEndpointFilter<ParameterIDValidatorFilter>();
      
     }
 
+    [Authorize]
     private async static Task<IResult> GetAll(ILogger<Product> logger, IProductRepository repository)
     {
         logger.Log(LogLevel.Information, "Endpoint of GetAll");
@@ -55,6 +57,7 @@ public static class ProductEndPoint
         return Results.Ok(apiResponse);
     }
 
+    [Authorize]
     private async static Task<IResult> GetById(ILogger<Product> logger, IProductRepository repository, int id)
     {
         logger.Log(LogLevel.Information, "Endpoint of GetById");
@@ -69,7 +72,7 @@ public static class ProductEndPoint
         return Results.Ok(apiResponse);
     }
 
-    // [Authorize]
+    [Authorize]
     private async static Task<IResult> Create(ILogger<Product> logger, IProductRepository repository, 
              [FromBody] ProductCreateRequest productCreateRequest)
     {
@@ -100,10 +103,10 @@ public static class ProductEndPoint
 
         return Results.Ok(response);
         //return Results.CreatedAtRoute("GetProduct",new { id=product.Id }, productDTO);
-        //return Results.Created($"/api/coupon/{product.Id}",productDTO);
+        //return Results.Created($"/api/product/{product.Id}",productDTO);
     }
 
-    // [Authorize]
+    [Authorize]
     private async static Task<IResult> Update(ILogger<Product> logger, IProductRepository repository, 
              [FromBody] ProductUpdateRequest productUpdateRequest)
     {
@@ -126,32 +129,32 @@ public static class ProductEndPoint
         return Results.Ok(response);
     }
 
-    //  [Authorize]
-     private async static Task<IResult> DeleteCoupon(ILogger<Product> logger, IProductRepository repository,  int id)
-     {
-        ApiResponse response = new() 
-        { 
-            IsSuccess = false, 
-            StatusCode = HttpStatusCode.BadRequest 
-        };
+    [Authorize]
+    private async static Task<IResult> Delete(ILogger<Product> logger, IProductRepository repository,  int id)
+    {
+       ApiResponse response = new() 
+       { 
+           IsSuccess = false, 
+           StatusCode = HttpStatusCode.BadRequest 
+       };
 
 
-        Product? existingProduct = await repository.GetAsync(id);
-        if (existingProduct != null)
-        {
-            await repository.RemoveAsync(existingProduct);
-            await repository.SaveAsync();
+       Product? existingProduct = await repository.GetAsync(id);
+       if (existingProduct != null)
+       {
+           await repository.RemoveAsync(existingProduct);
+           await repository.SaveAsync();
 
-            response.IsSuccess = true;
-            response.StatusCode = HttpStatusCode.NoContent;
+           response.IsSuccess = true;
+           response.StatusCode = HttpStatusCode.NoContent;
 
-            return Results.Ok(response);
-        }
-        else
-        {
-            response.ErrorMessages.Add($"Product not found with id = {id}");
-            return Results.BadRequest(response);
-        }
-     }
+           return Results.Ok(response);
+       }
+       else
+       {
+           response.ErrorMessages.Add($"Product not found with id = {id}");
+           return Results.BadRequest(response);
+       }
+    }
 
 }
