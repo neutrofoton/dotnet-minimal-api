@@ -15,7 +15,8 @@ public static class ProductEndPoint
         app.MapGet("/api/product/",GetAll)
             .WithName("GetProducts")
             .Produces<ApiResponse>((int)HttpStatusCode.OK)
-            //.RequireAuthorization("Admin");
+            //.RequireAuthorization()
+            //.RequireAuthorization("AdminOnly") //using auth policy
             ;
 
         app.MapGet("/api/product/{id:int}",GetById)
