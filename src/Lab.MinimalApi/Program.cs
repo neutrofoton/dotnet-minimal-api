@@ -1,5 +1,7 @@
 using Lab.MinimalApi;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,9 @@ builder.Services.AddDbContext<EFDbContext>(option=>
 // 2. Register Repository
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-// 3. 
+// 3. Register EndPoint validator
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+//builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 //===========================================================
 
@@ -27,6 +31,8 @@ var app = builder.Build();
 //=================Step 2: Register API End Point ===============================
 // 1. Register Product End Points
 app.ConfigureProductEndPoints();
+
+
 
 //==============================================================================
 
