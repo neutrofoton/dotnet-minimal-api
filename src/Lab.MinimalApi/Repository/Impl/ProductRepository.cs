@@ -28,7 +28,8 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product?> GetAsync(string name)
     {
-        return await dbContext.Products.FirstOrDefaultAsync(x =>x.Name!.Equals(name,StringComparison.CurrentCultureIgnoreCase));
+        //return await dbContext.Products.FirstOrDefaultAsync(x =>x.Name!.Equals(name,StringComparison.CurrentCultureIgnoreCase));
+        return await dbContext.Products.FirstOrDefaultAsync(x =>x.Name!.ToLower()==name.ToLower());
     }
 
     public async Task RemoveAsync(Product entity)
