@@ -25,6 +25,9 @@ public class EFDbContext : DbContext
                 Name = "Product 2",
                 Price = 101
             });
+
+        //modelBuilder.Entity<LocalUser>();
     }
     public DbSet<Product> Products { get; set; }
+    public DbSet<LocalUser> LocalUsers { get; set; }
 }
